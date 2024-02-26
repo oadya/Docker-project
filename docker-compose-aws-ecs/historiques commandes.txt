@@ -1,0 +1,63 @@
+
+Installation plugins ECS
+-------------------------
+
+https://github.com/docker-archive/ecs-plugin/blob/master/docs/get-started-linux.md
+
+You can download the Docker ECS plugin from this repository using the following command:
+
+$ curl -LO https://github.com/docker/ecs-plugin/releases/latest/download/docker-ecs-linux-amd64
+
+$ chmod +x docker-ecs-linux-amd64
+Plugin install
+In order for the Docker CLI to use the downloaded plugin, you will need to move it to the right place:
+
+$ mkdir -p /usr/local/lib/docker/cli-plugins
+
+$ mv docker-ecs-linux-amd64 /usr/local/lib/docker/cli-plugins/docker-ecs
+
+$ export DOCKER_CLI_EXPERIMENTAL=enabled
+
+$ DOCKER_CLI_EXPERIMENTAL=enabled docker help
+
+To verify the CLI plugin installation, you can check that it appears in the CLI help output or by outputting the plugin version:
+
+$ docker help | grep ecs
+  ecs*        Docker ECS (Docker Inc., 0.0.1)
+
+
+
+liste les contextes:
+#docker context ls
+
+configuration contexte ecs (nom du contexte,  user, region, secret key, access key)
+#docker ecs setup
+
+Switch de contexte
+#docker context use ecs
+
+creation du secret dans aws par ecs qui va permettre de se conecter dockerhub pour récuper les images
+#docker ecs secret create dockerHubAccessToken --username orpheadya --password <dockerHubPass>
+#docker --context ecs ecs secret create dockerHubAccessToken --username orpheadya --password <dockerHubPass>
+
+vérifier la création du secret avec le service secret manager dans aws
+
+Renseignez les variables suivantes :
+HUB_PULL_SECRET=xxx
+PROD_IMAGE=xxx
+
+deployer les ressources :
+# HUB_PULL_SECRET=${HUB_PULL_SECRET} PROD_IMAGE=${PROD_IMAGE} docker --context ecs ecs compose -n simpleWebappbDocker up
+
+vérifier la création des ressources dans aws à l'aide du service cloudformation
+
+
+supprimer les ressources:
+# HUB_PULL_SECRET=${HUB_PULL_SECRET} PROD_IMAGE=${PROD_IMAGE} docker --context ecs ecs compose -n simpleWebappbDocker down
+
+
+
+
+
+
+

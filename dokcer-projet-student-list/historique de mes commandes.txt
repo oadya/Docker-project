@@ -1,0 +1,58 @@
+
+Build de l'mage à partir du dockerfile :
+----------------------------------------
+
+sudo yum install git -y 
+
+git clone https://github.com/diranetafen/student-list.git
+
+vi Dockerfile
+
+docker build -t api-pozos:1 .
+docker images
+docker network create pozos
+docker network ls
+docker ps -a
+docker run -d --network pozos  --name test-api-pozos -v ${PWD}/student_age.json:/data/student_age.json -p 4000:5000 api-pozos:1 
+docker ps -a
+curl -u toto:python -X GET http://127.0.0.1:4000/pozos/api/v1.0/get_student_ages
+
+
+Build de l'mage à partir du docker compose :
+--------------------------------------------
+
+Installation docker compose :
+
+echo "https://github.com/docker/compose/releases/download/v1.29.2/docker-compose-$(uname -s)-$(uname -m)"
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+ll
+docker-compose up -d
+docker-compose ps
+docker network ls
+
+ip a
+
+
+Registre
+---------
+
+docker network ls
+docker run -d -p 5000:5000 --name registry-pozos  --network student-list_api-pozos registry:2
+docker ps -a
+docker images
+docker image tag api-pozos:1 localhost:5000/api-pozos:1
+docker images
+docker push localhost:5000/api-pozos:1
+docker run -d --network student-list_api-pozos -p 4002:80 -e REGISTRY_TITLE="POZOS REGISTRY" -e REGISTRY_URL="registry-pozos:5000" -e DELETE_IMAGES=true joxit/docker-registry-ui:static
+
+docker run -d  --name registry-pozos_UI --network student-list_api-pozos -p 4002:80 -e REGISTRY_TITLE="POZOS REGISTRY" -e REGISTRY_URL=http://registry-pozos:5000 -e DELETE_IMAGES=true joxit/docker-registry-ui:static
+docker ps -a
+ip a
+docker images
+docker image tag joxit/docker-registry-ui:static  localhost:5000/joxit/docker-registry-ui:static
+docker images
+docker push localhost:5000/joxit/docker-registry-ui:static
+docker image tag joxit/docker-registry-ui:static  localhost:5000/joxit/docker-registry-ui:ulrich
+docker push localhost:5000/joxit/docker-registry-ui:ulrich

@@ -1,0 +1,10 @@
+cd app
+
+
+docker build --target test --tag test . (builder la couche test du dockerfile)
+
+
+docker build --target prod--tag prod .  (builder l'image de prod)
+
+
+docker-compose -f docker-compose-dev.yml up -d 
